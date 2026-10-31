@@ -89,13 +89,13 @@ class QoderApi(
         val pat = store.qoderPat
         if (pat.isNullOrBlank()) return@withContext needsLogin()
 
-        var jobToken = ensureJobToken(pat)
-        if (jobToken.isNullOrBlank()) return@withContext needsLogin()
+        var jobToken: String = ensureJobToken(pat)
+            ?: return@withContext needsLogin()
 
         var page = fetchCampaigns(jobToken)
         if (page.authFailed) {
             jobToken = refreshJobTokenOrExchange(pat)
-            if (jobToken.isNullOrBlank()) return@withContext needsLogin()
+                ?: return@withContext needsLogin()
             page = fetchCampaigns(jobToken)
         }
         if (page.authFailed) return@withContext needsLogin()

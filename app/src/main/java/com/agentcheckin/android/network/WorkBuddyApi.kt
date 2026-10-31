@@ -80,8 +80,9 @@ class WorkBuddyApi(private val store: SecureStore) {
     }
 
     suspend fun checkin(): CheckinResult = withContext(Dispatchers.IO) {
-        var token = store.wbAccessToken
-        if (token.isNullOrBlank()) {
+        var token: String = store.wbAccessToken
+            ?: return@withContext needsLogin()
+        if (token.isBlank()) {
             return@withContext needsLogin()
         }
         var uid = store.wbUid
